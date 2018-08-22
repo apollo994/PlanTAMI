@@ -5,11 +5,11 @@ This **tool** takes two lists of DEGs of different species and returns the the d
 between them, to eavoulate the family Normalise Pointwise Mutual Information is used and an empirical p value is computed. 
 
 The **input** needed by the tool are:
-  --plaza 
+  + --plaza 
   table with geneID, speciesID and familyID semicolon separed, downloadable from https://bioinformatics.psb.ugent.be/plaza/
-  --sp1 , --sp2 
+  + --sp1 , --sp2 
   the species of DEGs (es. ath, sly, see plaza web site)
-  --in_sp1 --in_sp2
+  + --in_sp1 --in_sp2
   DEGs lists with the same nomenclature of the plaza table
   
  The **optional arguments** are:
