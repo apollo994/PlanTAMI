@@ -42,16 +42,16 @@ The **output** return by the tool are:
  
  + -NPMI_results_sp1
  table with NPMI value for each family of sp1 in common with sp2, in particulare are reported:
-  * Fam_ID: Family ID
-  * DEGs: DEGs in the family and family size
-  * DEGs_set: DEGs in family of the same size in the input set
-  * DEGs_genome: DEGs in family of the same size in the genome
-  * p_my: DEGs in the set/DEGs in family of the same size in the set
-  * p_all: (family size * DEGs in family of the same size in the set) / DEGs in family of the same size in the genome
-  * npmi: log2(p_my/p_all)/-log2(p_all)
-  * p_value: number of times i see higer or equal NPMI value in random set / number of set generated 
-  * FDR_bonf : Bonferroni multiple test correction 
-  * FDR_BY: Benjamini-Yekutieli (or Benjamini-Hochberg) multiple test correction 
+   + Fam_ID: Family ID
+   + DEGs: DEGs in the family and family size
+   + DEGs_set: DEGs in family of the same size in the input set
+   + DEGs_genome: DEGs in family of the same size in the genome
+   + p_my: DEGs in the set/DEGs in family of the same size in the set
+   + p_all: (family size * DEGs in family of the same size in the set) / DEGs in family of the same size in the genome
+   + npmi: log2(p_my/p_all)/-log2(p_all)
+   + p_value: number of times i see higer or equal NPMI value in random set / number of set generated 
+   + FDR_bonf : Bonferroni multiple test correction 
+   + FDR_BY: Benjamini-Yekutieli (or Benjamini-Hochberg) multiple test correction 
 
  + -NPMI_results_sp2
  as above but for sp2
