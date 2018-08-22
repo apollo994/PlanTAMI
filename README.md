@@ -1,10 +1,10 @@
-# NPMI
-Tool for normalised pointwise mutal information computation across two DE gene list
+### NPMI
+# Tool for normalised pointwise mutal information computation across two DE gene list
 
-This tool takes two lists of DEGs of different species and returns the the directo orthologs and orthologs family enriched
+This **tool** takes two lists of DEGs of different species and returns the the directo orthologs and orthologs family enriched
 between them, to eavoulate the family Normalise Pointwise Mutual Information is used and an empirical p value is computed. 
 
-The input needed by the tool are:
+The **input** needed by the tool are:
   --plaza 
   table with geneID, speciesID and familyID semicolon separed, downloadable from https://bioinformatics.psb.ugent.be/plaza/
   --sp1 , --sp2 
@@ -12,8 +12,8 @@ The input needed by the tool are:
   --in_sp1 --in_sp2
   DEGs lists with the same nomenclature of the plaza table
   
- The optional arguments are:
-  --th_sc 
+ The **optional arguments** are:
+  --th_sc
   the threshold for calling significant direct orthologs in the hypergeometric test (def=0.05)
   --th
   the threshold for calling significant orthologs family corrected p-value in the NPMI analysis (def=0.05)
@@ -24,7 +24,7 @@ The input needed by the tool are:
   --sample
   the name of the sample to save results (def=my_sample_result)
 
-The output return by the tool are: 
+The **output** return by the tool are: 
  -significant_direct_orthologs (or NOT_significant_direct_orthologs)
  list of direct orthologs between the two species, the fold enrichment and the relative p-value 
 
