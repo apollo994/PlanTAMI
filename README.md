@@ -1,5 +1,5 @@
-###### NPMI
-# Tool for normalised pointwise mutal information computation across two DE gene list
+# NPMI
+###### Tool for normalised pointwise mutal information computation across two DE gene list
 
 This **tool** takes two lists of DEGs of different species and returns the the directo orthologs and orthologs family enriched
 between them, to eavoulate the family Normalise Pointwise Mutual Information is used and an empirical p value is computed. 
