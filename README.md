@@ -6,7 +6,7 @@ between them, to eavoulate the family Normalise Pointwise Mutual Information is 
 
 The **input** needed by the tool are:
   + --plaza 
-  table with geneID, speciesID and familyID semicolon separed, downloadable from https://bioinformatics.psb.ugent.be/plaza/
+  table with geneID, speciesID and familyID semicolon separed https://bioinformatics.psb.ugent.be/plaza/
   + --sp1 , --sp2 
   the species of DEGs (es. ath, sly, see plaza web site)
   + --in_sp1 --in_sp2
