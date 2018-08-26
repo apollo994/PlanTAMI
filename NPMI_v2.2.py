@@ -1180,13 +1180,6 @@ def main():
         sys.stdout.write("----------------------------------------------------------"+"\n")
 
 
-        print(mean_NPMI_sp1)
-        print(mean_NPMI_sp2)
-        print(mean_NPMI_all)
-        print(mean_NPMI_sp1_sig)
-        print(mean_NPMI_sp2_sig)
-        print(mean_NPMI_all_sig)
-
 ################################################################################
 
 
