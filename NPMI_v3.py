@@ -1,6 +1,9 @@
 #in piu rispetto a 2:
-#   -calcolo delle medie di NPMI sia su famiglie intersezioni che significative
-#   -insermimento delle medie nei risultati e paragrafo GENERAL RESULTS da cui estrarree nella valutazione del confronto
+#   -ora non tengo piu conto delle famiglie che hanno lo stesso numero di membri
+#   -correzione sul calcolo della significativita degloi ortologhi diretti
+#   -FDR di default BH
+#   -NPMI media tienene conto anche delle famiglie non in comune (NPMI=0) s
+
 
 import sys
 import time
@@ -30,9 +33,10 @@ def main():
     #otional
     parser.add_argument('--th_sc', metavar='th_sc',type=float ,default="0.05" ,help='Threshold for direct ortgologs enrichment (def=0.05)')
     parser.add_argument('--random', metavar='random',type=int ,default="10000" ,help='number of list of random plazaID to generate (def=10000)')
-    parser.add_argument('--FDR', metavar='FDR',default="BY" ,help='Type of multiple test correction, BH or BY (def=BY)')
+    parser.add_argument('--FDR', metavar='FDR',default="BH" ,help='Type of multiple test correction, BH or BY (def=BH)')
     parser.add_argument('--th', metavar='th',type=float ,default="0.05" ,help='BY correction threshold (def=0.05)')
     parser.add_argument('--sample', metavar='sample', default="my_sample_result", help='sample name')
+    parser.add_argument('--verbose', metavar='verbose',type=int, default="1", help='Show run: 0=none, 1=compact, 2=full, 3=line ')
 
     args = parser.parse_args()
 
@@ -224,10 +228,10 @@ def main():
         return (BY_res)
 
 ################################################################################
-
-    sys.stdout.write("\n")
-    sys.stdout.write("----------------------------------------------------------"+"\n")
-    sys.stdout.write("Reading "+args.sp1+" and "+args.sp2+" background data..."+"\n")
+    if args.verbose==2:
+        sys.stdout.write("\n")
+        sys.stdout.write("----------------------------------------------------------"+"\n")
+        sys.stdout.write("Reading "+args.sp1+" and "+args.sp2+" background data..."+"\n")
 
 
     #leggendo il file delle famiglie genero:
@@ -362,37 +366,38 @@ def main():
         for gene in common_multiple_memeber_all_sp2[fam]:
             genes_in_multiple_memebers_fams_sp2.append(gene)
 
+    if args.verbose==2:
+        sys.stdout.write("\n")
+        sys.stdout.write(args.sp1+" background data:"+"\n")
+        sys.stdout.write(" Genes: "+str(len(all_spID_sp1))+"\n")
+        sys.stdout.write(" Families: "+str(len(unique(all_plazaID_sp1)))+"\n")
+        sys.stdout.write(" of which..."+"\n")
+        sys.stdout.write("  Direct orthologs: "+str(len(single_copy_all_sp1))+"\n")
+        sys.stdout.write("  Multiple member families: "+ str(len(multiple_memeber_all_sp1))+"\n")
 
-    sys.stdout.write("\n")
-    sys.stdout.write(args.sp1+" background data:"+"\n")
-    sys.stdout.write(" Genes: "+str(len(all_spID_sp1))+"\n")
-    sys.stdout.write(" Families: "+str(len(unique(all_plazaID_sp1)))+"\n")
-    sys.stdout.write(" of which..."+"\n")
-    sys.stdout.write("  Direct orthologs: "+str(len(single_copy_all_sp1))+"\n")
-    sys.stdout.write("  Multiple member families: "+ str(len(multiple_memeber_all_sp1))+"\n")
+        sys.stdout.write("\n")
+        sys.stdout.write(args.sp2+" background data:"+"\n")
+        sys.stdout.write(" Genes: "+str(len(all_spID_sp2))+"\n")
+        sys.stdout.write(" Families: "+str(len(unique(all_plazaID_sp2)))+"\n")
+        sys.stdout.write(" of which..."+"\n")
+        sys.stdout.write("  Direct orthologs: "+str(len(single_copy_all_sp2))+"\n")
+        sys.stdout.write("  Multiple member families: "+ str(len(multiple_memeber_all_sp2))+"\n")
 
-    sys.stdout.write("\n")
-    sys.stdout.write(args.sp2+" background data:"+"\n")
-    sys.stdout.write(" Genes: "+str(len(all_spID_sp2))+"\n")
-    sys.stdout.write(" Families: "+str(len(unique(all_plazaID_sp2)))+"\n")
-    sys.stdout.write(" of which..."+"\n")
-    sys.stdout.write("  Direct orthologs: "+str(len(single_copy_all_sp2))+"\n")
-    sys.stdout.write("  Multiple member families: "+ str(len(multiple_memeber_all_sp2))+"\n")
-
-    sys.stdout.write("\n")
-    sys.stdout.write("Intersection results:"+"\n")
-    sys.stdout.write(" Families in common between "+ args.sp1+" and "+args.sp2+": "+ str(len(very_ALL_common_families))+"\n")
-    sys.stdout.write(" of which..."+"\n")
-    sys.stdout.write("  Direct orthologs: "+ str(len(direct_orho_sp1_sp2))+"\n")
-    sys.stdout.write("  Multiple member families: "+ str(len(all_common_fam_sp1_sp2))+"\n")
+        sys.stdout.write("\n")
+        sys.stdout.write("Intersection results:"+"\n")
+        sys.stdout.write(" Families in common between "+ args.sp1+" and "+args.sp2+": "+ str(len(very_ALL_common_families))+"\n")
+        sys.stdout.write(" of which..."+"\n")
+        sys.stdout.write("  Direct orthologs: "+ str(len(direct_orho_sp1_sp2))+"\n")
+        sys.stdout.write("  Multiple member families: "+ str(len(all_common_fam_sp1_sp2))+"\n")
 
 
 ################################################################################
 
 
-    sys.stdout.write("\n")
-    sys.stdout.write("----------------------------------------------------------"+"\n")
-    sys.stdout.write("Reading "+args.sp1+" and "+args.sp2+" input data..."+"\n")
+    if args.verbose==2:
+        sys.stdout.write("\n")
+        sys.stdout.write("----------------------------------------------------------"+"\n")
+        sys.stdout.write("Reading "+args.sp1+" and "+args.sp2+" input data..."+"\n")
 
     #leggo i due file di input (liste geni DE) e genero:
     #dizionario con famiglia e relativi geni
@@ -476,8 +481,6 @@ def main():
         for gene in sig_plazaID_spID_sp1[fam]:
             input_genes_in_multiple_memebers_fams_sp1.append(gene)
 
-
-    for fam in my_ortho_fam:
         for gene in sig_plazaID_spID_sp2[fam]:
             input_genes_in_multiple_memebers_fams_sp2.append(gene)
 
@@ -486,39 +489,40 @@ def main():
     # print (len(input_genes_in_multiple_memebers_fams_sp1))
     # print (len(input_genes_in_multiple_memebers_fams_sp2))
 
+    if args.verbose==2:
+        sys.stdout.write("\n")
+        sys.stdout.write(sample_sp1 + "," + args.sp1+" input data :"+"\n")
+        sys.stdout.write(" Genes: "+str(len(sig_spID_sp1))+"\n")
+        sys.stdout.write(" Families: "+str(len(unique(sig_plazaID_sp1)))+"\n")
+        sys.stdout.write(" of which..."+"\n")
+        sys.stdout.write("  Direct orthologs: "+ str(len(single_copy_my_sp1))+"\n")
+        sys.stdout.write("  Multiple member families: "+ str(len(multiple_memeber_my_sp1))+"\n")
 
-    sys.stdout.write("\n")
-    sys.stdout.write(sample_sp1 + "," + args.sp1+" input data :"+"\n")
-    sys.stdout.write(" Genes: "+str(len(sig_spID_sp1))+"\n")
-    sys.stdout.write(" Families: "+str(len(unique(sig_plazaID_sp1)))+"\n")
-    sys.stdout.write(" of which..."+"\n")
-    sys.stdout.write("  Direct orthologs: "+ str(len(single_copy_my_sp1))+"\n")
-    sys.stdout.write("  Multiple member families: "+ str(len(multiple_memeber_my_sp1))+"\n")
+        sys.stdout.write("\n")
+        sys.stdout.write(sample_sp2 + "," + args.sp2+" input data:"+"\n")
+        sys.stdout.write(" Genes: "+str(len(sig_spID_sp2))+"\n")
+        sys.stdout.write(" Families: "+str(len(unique(sig_plazaID_sp2)))+"\n")
+        sys.stdout.write(" of which..."+"\n")
+        sys.stdout.write("  Direct orthologs: "+ str(len(single_copy_my_sp2))+"\n")
+        sys.stdout.write("  Multiple member families: "+ str(len(multiple_memeber_my_sp2))+"\n")
 
-    sys.stdout.write("\n")
-    sys.stdout.write(sample_sp2 + "," + args.sp2+" input data:"+"\n")
-    sys.stdout.write(" Genes: "+str(len(sig_spID_sp2))+"\n")
-    sys.stdout.write(" Families: "+str(len(unique(sig_plazaID_sp2)))+"\n")
-    sys.stdout.write(" of which..."+"\n")
-    sys.stdout.write("  Direct orthologs: "+ str(len(single_copy_my_sp2))+"\n")
-    sys.stdout.write("  Multiple member families: "+ str(len(multiple_memeber_my_sp2))+"\n")
-
-    sys.stdout.write("\n")
-    sys.stdout.write("Intersection results:"+"\n")
-    sys.stdout.write(" Families in common between input "+ args.sp1+" and input "+args.sp2+": "+ str(len(sig_very_all_common_fam))+"\n")
-    sys.stdout.write(" of which..."+"\n")
-    sys.stdout.write(" Direct orthologs: "+ str(len(my_direct_ortho))+"\n")
-    sys.stdout.write(" Multiple member families: "+ str(len(my_ortho_fam))+"\n")
+        sys.stdout.write("\n")
+        sys.stdout.write("Intersection results:"+"\n")
+        sys.stdout.write(" Families in common between input "+ args.sp1+" and input "+args.sp2+": "+ str(len(sig_very_all_common_fam))+"\n")
+        sys.stdout.write(" of which..."+"\n")
+        sys.stdout.write(" Direct orthologs: "+ str(len(my_direct_ortho))+"\n")
+        sys.stdout.write(" Multiple member families: "+ str(len(my_ortho_fam))+"\n")
 
 ################################################################################
 
     #test per indagare se le due liste di input sono arricchiti di ortologhi diretti
     #rispetto al background
 
-    sys.stdout.write("\n")
-    sys.stdout.write("----------------------------------------------------------"+"\n")
-    sys.stdout.write("Direct orthologs analysis..."+"\n")
-    sys.stdout.write("\n")
+    if args.verbose==2:
+        sys.stdout.write("\n")
+        sys.stdout.write("----------------------------------------------------------"+"\n")
+        sys.stdout.write("Direct orthologs analysis..."+"\n")
+        sys.stdout.write("\n")
 
     #successi, ortologhi diretti in comune
     successi=len(my_direct_ortho)
@@ -540,27 +544,29 @@ def main():
 
     enrichment_dir_ortho=round((successi/tentativi)/(successi_popolazione/popolazione),4)
 
-    if pv_hyp_dir_ortho<args.th_sc:
-        sys.stdout.write("The intersection of the updated list is ENRICHED in direct orthologs!"+"\n")
-        sys.stdout.write(" Fold change: "+str(enrichment_dir_ortho)+"\n")
-        sys.stdout.write(" P.value : "+str(pv_hyp_dir_ortho)+"   (th="+str(args.th_sc)+")"+"\n")
-        sys.stdout.write("\n")
-        sys.stdout.write(" Direct ortologs gene IDs can be found in the result folder."+"\n")
-        sys.stdout.write("\n")
+    if args.verbose==2:
+        if pv_hyp_dir_ortho<args.th_sc:
+            sys.stdout.write("The intersection of the updated list is ENRICHED in direct orthologs!"+"\n")
+            sys.stdout.write(" Fold change: "+str(enrichment_dir_ortho)+"\n")
+            sys.stdout.write(" P.value : "+str(pv_hyp_dir_ortho)+"   (th="+str(args.th_sc)+")"+"\n")
+            sys.stdout.write("\n")
+            sys.stdout.write(" Direct ortologs gene IDs can be found in the result folder."+"\n")
+            sys.stdout.write("\n")
 
-    else:
-        sys.stdout.write("The intersection of the updated list is NOT ENRICHED in direct orthologs!"+"\n")
-        sys.stdout.write(" Fold change: "+str(enrichment_dir_ortho)+"\n")
-        sys.stdout.write(" P.value : "+str(pv_hyp_dir_ortho)+"   (th="+str(args.th_sc)+")"+"\n")
-        sys.stdout.write("\n")
-        sys.stdout.write(" Direct ortologs gene IDs can be found in the result folder."+"\n")
+        else:
+            sys.stdout.write("The intersection of the updated list is NOT ENRICHED in direct orthologs!"+"\n")
+            sys.stdout.write(" Fold change: "+str(enrichment_dir_ortho)+"\n")
+            sys.stdout.write(" P.value : "+str(pv_hyp_dir_ortho)+"   (th="+str(args.th_sc)+")"+"\n")
+            sys.stdout.write("\n")
+            sys.stdout.write(" Direct ortologs gene IDs can be found in the result folder."+"\n")
 
 
 ################################################################################
 
-    sys.stdout.write("----------------------------------------------------------"+"\n")
-    sys.stdout.write("Computing NPMI on families..."+"\n")
-    sys.stdout.write("\n")
+    if args.verbose==2:
+        sys.stdout.write("----------------------------------------------------------"+"\n")
+        sys.stdout.write("Computing NPMI on families..."+"\n")
+        sys.stdout.write("\n")
 
     #genero dataset con geneID random della grandezza del set di partenza
     #converto in famiglie, faccio l'intersezione e calcolo l'NPMI
@@ -575,76 +581,120 @@ def main():
 
     for i in range(0,args.random):
 
-        #genero liste random di fam ID con la stessa lunghezza delle liste di input
+        #genero liste random di geneID con la stessa lunghezza delle liste di input
         random_ID_sp1=random.sample(all_plazaID_sp1,len(sig_spID_sp1))
 
         random_ID_sp2=random.sample(all_plazaID_sp2,len(sig_spID_sp2))
 
+
         #intersezione delle due liste random
         intersection_random=common_elements(random_ID_sp1,random_ID_sp2)
 
-        #cicli per eliminare dalle liste random gli ID non presenti nell'altra lista
-        #e generare un dizionari con i conti degli ID rimasti
+        # #cicli per eliminare dalle liste random gli ID non presenti nell'altra lista
+        # #e generare un dizionari con i conti degli ID rimasti
+        #
+        # filt_random_ID_sp1=[]
+        # filt_random_ID_sp2=[]
+        #
+        # for element in random_ID_sp1:
+        #     if element in intersection_random:
+        #         filt_random_ID_sp1.append(element)
+        #
+        # count_random_sp1=compute_count_list(filt_random_ID_sp1)
+        #
+        #
+        # for element in random_ID_sp2:
+        #     if element in intersection_random:
+        #         filt_random_ID_sp2.append(element)
+        #
+        # count_random_sp2=compute_count_list(filt_random_ID_sp2)
+        #
+        # #calcolo la NPMI per ogni famiglia e annoto nel random_dataset_result,
+        # #se la famiglia non è presente nel dizionario annoto 0
 
-        filt_random_ID_sp1=[]
-        filt_random_ID_sp2=[]
+        #anziche fare due cicli separati iniziallizo prima i dizionari conti
+        #e con un solo ciclo lo riempo
 
-        for element in random_ID_sp1:
-            if element in intersection_random:
-                filt_random_ID_sp1.append(element)
+        count_random_sp1={}
+        count_random_sp2={}
 
-        count_random_sp1=compute_count_list(filt_random_ID_sp1)
+        for element in intersection_random:
+            if element in count_random_sp1:
+                count_random_sp1[element]+=1
+            else:
+                count_random_sp1[element]=1
+            if element in count_random_sp2:
+                count_random_sp2[element]+=1
+            else:
+                count_random_sp2[element]=1
 
+        # #sp1
+        # for family in random_dataset_result_sp1:
+        #     if family in count_random_sp1:
+        #
+        #         DEGs_in_fam=float(count_random_sp1[family])
+        #         all_DEGs_in_fams=float(len(filt_random_ID_sp1))
+        #         fam_size=len(plaza_diz_sp1[family])
+        #         all_genes_in_fams=float(len(genes_in_multiple_memebers_fams_sp1))
+        #
+        #         p_my=DEGs_in_fam/all_DEGs_in_fams
+        #         p_all=fam_size/all_genes_in_fams
+        #
+        #         npmi=compute_npmi(p_my,p_all)
+        #         random_dataset_result_sp1[family].append(npmi)
+        #
+        #     else:
+        #         random_dataset_result_sp1[family].append(0)
+        #
+        # #sp2
+        # for family in random_dataset_result_sp2:
+        #     if family in count_random_sp2:
+        #
+        #         DEGs_in_fam=float(count_random_sp2[family])
+        #         all_DEGs_in_fams=float(len(filt_random_ID_sp2))
+        #         fam_size=len(plaza_diz_sp2[family])
+        #         all_genes_in_fams=float(len(genes_in_multiple_memebers_fams_sp2))
+        #
+        #         p_my=DEGs_in_fam/all_DEGs_in_fams
+        #         p_all=fam_size/all_genes_in_fams
+        #
+        #         npmi=compute_npmi(p_my,p_all)
+        #         random_dataset_result_sp2[family].append(npmi)
+        #
+        #
+        #     else:
+        #         random_dataset_result_sp2[family].append(0)
 
-        for element in random_ID_sp2:
-            if element in intersection_random:
-                filt_random_ID_sp2.append(element)
+        #Non annoto piu gli zeri ma ne vado a tenere conto nel momento in cui
+        #calcolo il p-value dividendo per il numero di test
 
-        count_random_sp2=compute_count_list(filt_random_ID_sp2)
-
-        #calcolo la NPMI per ogni famiglia e annoto nel random_dataset_result,
-        #se la famiglia non è presente nel dizionario annoto 0
-
-        #sp1
-        for family in random_dataset_result_sp1:
-            if family in count_random_sp1:
-
+        all_DEGs_in_fams_SP1=float(len(count_random_sp1.keys()))
+        all_genes_in_fams_SP1=float(len(genes_in_multiple_memebers_fams_sp1))
+        for family in count_random_sp1:
+            if family in random_dataset_result_sp1:
                 DEGs_in_fam=float(count_random_sp1[family])
-                all_DEGs_in_fams=float(len(filt_random_ID_sp1))
                 fam_size=len(plaza_diz_sp1[family])
-                all_genes_in_fams=float(len(genes_in_multiple_memebers_fams_sp1))
-
-                p_my=DEGs_in_fam/all_DEGs_in_fams
-                p_all=fam_size/all_genes_in_fams
-
+                p_my=DEGs_in_fam/all_DEGs_in_fams_SP1
+                p_all=fam_size/all_genes_in_fams_SP1
                 npmi=compute_npmi(p_my,p_all)
                 random_dataset_result_sp1[family].append(npmi)
 
-            else:
-                random_dataset_result_sp1[family].append(0)
-
         #sp2
-        for family in random_dataset_result_sp2:
-            if family in count_random_sp2:
-
+        all_DEGs_in_fams_SP2=float(len(count_random_sp1.keys()))
+        all_genes_in_fams_SP2=float(len(genes_in_multiple_memebers_fams_sp1))
+        for family in count_random_sp2:
+            if family in random_dataset_result_sp2:
                 DEGs_in_fam=float(count_random_sp2[family])
-                all_DEGs_in_fams=float(len(filt_random_ID_sp2))
                 fam_size=len(plaza_diz_sp2[family])
-                all_genes_in_fams=float(len(genes_in_multiple_memebers_fams_sp2))
-
-                p_my=DEGs_in_fam/all_DEGs_in_fams
-                p_all=fam_size/all_genes_in_fams
-
-                npmi=compute_npmi(p_my,p_all)
+                p_my=DEGs_in_fam/all_DEGs_in_fams_SP2
+                p_all=fam_size/all_genes_in_fams_SP2
+                pmi=compute_npmi(p_my,p_all)
                 random_dataset_result_sp2[family].append(npmi)
 
-
-            else:
-                random_dataset_result_sp2[family].append(0)
-
-
-        update_progress(str(args.random)+" random datasets generation", i/args.random)
-    update_progress(str(args.random)+" random datasets generation", 1)
+        if args.verbose==2:
+            update_progress(str(args.random)+" random datasets generation", i/args.random)
+    if args.verbose==2:
+        update_progress(str(args.random)+" random datasets generation", 1)
 
 
 ################################################################################
@@ -688,9 +738,10 @@ def main():
 
         higher=0
 
-        for value in random_dataset_result_sp1[family]:
-            if float(value)>=npmi:
-                higher=higher+1
+        if family in random_dataset_result_sp1:
+            for value in random_dataset_result_sp1[family]:
+                if float(value)>=npmi:
+                    higher=higher+1
 
         p_value=float(higher)/float(args.random)
 
@@ -731,10 +782,10 @@ def main():
         npmi=compute_npmi(p_my,p_all)
 
         higher=0
-
-        for value in random_dataset_result_sp2[family]:
-            if float(value)>=npmi:
-                higher=higher+1
+        if family in random_dataset_result_sp2:
+            for value in random_dataset_result_sp2[family]:
+                if float(value)>=npmi:
+                    higher=higher+1
 
         p_value=float(higher)/float(args.random)
 
@@ -797,15 +848,17 @@ def main():
     sorted_result_diz_sp1=dict(sorted_result_diz_sp1)
     sorted_result_diz_sp2=dict(sorted_result_diz_sp2)
 
-    sys.stdout.write("\n")
-    sys.stdout.write(" NPMI analysis results can be found in the result folder."+"\n")
+    if args.verbose==2:
+        sys.stdout.write("\n")
+        sys.stdout.write(" NPMI analysis results can be found in the result folder."+"\n")
 
 ################################################################################
 
-    sys.stdout.write("\n")
-    sys.stdout.write("----------------------------------------------------------"+"\n")
-    sys.stdout.write("Calling significant families and genes..."+"\n")
-    sys.stdout.write("\n")
+    if args.verbose==2:
+        sys.stdout.write("\n")
+        sys.stdout.write("----------------------------------------------------------"+"\n")
+        sys.stdout.write("Calling significant families and genes..."+"\n")
+        sys.stdout.write("\n")
 
     #leggo i sorted result diz per selezionare le famiglie significative ,
     #basamndomi su pv_corretti < di args.th
@@ -860,17 +913,17 @@ def main():
         sum_NPMI_all_sig=sum_NPMI_all_sig+float(sorted_result_diz_sp1[family][5])+float(sorted_result_diz_sp2[family][5])
 
     if len(sorted_result_diz_sp1)!=0:
-        mean_NPMI_sp1=round(sum_NPMI_sp1/len(sorted_result_diz_sp1),4)
+        mean_NPMI_sp1=round(sum_NPMI_sp1/len(multiple_memeber_my_sp1),4)
     else:
         mean_NPMI_sp1=0
 
     if len(sorted_result_diz_sp2)!=0:
-        mean_NPMI_sp2=round(sum_NPMI_sp2/len(sorted_result_diz_sp2),4)
+        mean_NPMI_sp2=round(sum_NPMI_sp2/len(multiple_memeber_my_sp2),4)
     else:
         mean_NPMI_sp2=0
 
     if len(sorted_result_diz_sp1)!=0:
-        mean_NPMI_all=round(sum_NPMI_all/(len(sorted_result_diz_sp1)*2),4)
+        mean_NPMI_all=round(sum_NPMI_all/(len(multiple_memeber_my_sp1)+len(multiple_memeber_my_sp2)),4)
     else:
         mean_NPMI_all=0
 
@@ -904,20 +957,22 @@ def main():
         diz_common_sig_family_sp1_sp2[family].append(sig_plazaID_spID_sp2[family])
         number_of_genes_in_common=number_of_genes_in_common+len(sig_plazaID_spID_sp2[family])
 
-    sys.stdout.write(" Significant families in "+sample_sp1+": "+str(len(sig_family_sp1))+" ("+str(len(sig_genes_sp1))+" genes)"+"\n")
-    sys.stdout.write(" Significant families in "+sample_sp2+": "+str(len(sig_family_sp2))+" ("+str(len(sig_genes_sp2))+" genes)"+"\n")
-    sys.stdout.write(" Significant families in common: "+str(len(common_sig_family_sp1_sp2))+" ("+str(number_of_genes_in_common)+" genes)"+"\n")
-    sys.stdout.write("\n")
-    sys.stdout.write(" Significant families and genes IDs can be found in the result folder."+"\n")
-    sys.stdout.write("\n")
+    if args.verbose==2:
+        sys.stdout.write(" Significant families in "+sample_sp1+": "+str(len(sig_family_sp1))+" ("+str(len(sig_genes_sp1))+" genes)"+"\n")
+        sys.stdout.write(" Significant families in "+sample_sp2+": "+str(len(sig_family_sp2))+" ("+str(len(sig_genes_sp2))+" genes)"+"\n")
+        sys.stdout.write(" Significant families in common: "+str(len(common_sig_family_sp1_sp2))+" ("+str(number_of_genes_in_common)+" genes)"+"\n")
+        sys.stdout.write("\n")
+        sys.stdout.write(" Significant families and genes IDs can be found in the result folder."+"\n")
+        sys.stdout.write("\n")
 
 ################################################################################
 
     #scrivo gli output
 
-    sys.stdout.write("----------------------------------------------------------"+"\n")
-    sys.stdout.write("Writing outputs..."+"\n")
-    sys.stdout.write("\n")
+    if args.verbose==2:
+        sys.stdout.write("----------------------------------------------------------"+"\n")
+        sys.stdout.write("Writing outputs..."+"\n")
+        sys.stdout.write("\n")
 
     #ortolghi diretti sia che siano significativi che non
     if pv_hyp_dir_ortho<args.th_sc:
@@ -929,7 +984,8 @@ def main():
             for fam in my_direct_ortho:
                 dir_ort_out.write(fam+"\t"+sig_plazaID_spID_sp1[fam][0]+"\t"+sig_plazaID_spID_sp2[fam][0]+"\n")
 
-        sys.stdout.write(" significant_direct_orthologs..............OK"+"\n")
+        if args.verbose==2:
+            sys.stdout.write(" significant_direct_orthologs..............OK"+"\n")
 
     else:
         with open ("./"+args.sample+"_results/"+args.sample+"_NOT_significant_direct_orthologs.txt", "w") as dir_ort_out:
@@ -940,19 +996,22 @@ def main():
             for fam in my_direct_ortho:
                 dir_ort_out.write(fam+"\t"+sig_plazaID_spID_sp1[fam][0]+"\t"+sig_plazaID_spID_sp2[fam][0]+"\n")
 
-        sys.stdout.write(" NOT_significant_direct_orthologs..........OK"+"\n")
+        if args.verbose==2:
+            sys.stdout.write(" NOT_significant_direct_orthologs..........OK"+"\n")
 
     #geni significativi di sp1
     with open ("./"+args.sample+"_results/"+args.sample+"_significant_genes_sp1.txt", "w") as sig_genes_sp1_out:
         for gene in sig_genes_sp1:
             sig_genes_sp1_out.write(gene+"\n")
-    sys.stdout.write(" significant_genes_sp1.....................OK"+"\n")
+    if args.verbose==2:
+        sys.stdout.write(" significant_genes_sp1.....................OK"+"\n")
 
     #geni significativi di sp2
     with open ("./"+args.sample+"_results/"+args.sample+"_significant_genes_sp2.txt", "w") as sig_genes_sp2_out:
         for gene in sig_genes_sp2:
             sig_genes_sp2_out.write(gene+"\n")
-    sys.stdout.write(" significant_genes_sp2.....................OK"+"\n")
+    if args.verbose==2:
+        sys.stdout.write(" significant_genes_sp2.....................OK"+"\n")
 
     #famiglie e geni significativi in comune
     with open ("./"+args.sample+"_results/"+args.sample+"_significant_common_families_and_genes.txt", "w") as sig_fam_genes_comm_out:
@@ -963,7 +1022,8 @@ def main():
             sig_fam_genes_comm_out.write(','.join(diz_common_sig_family_sp1_sp2[fam][1])+"\t")
             sig_fam_genes_comm_out.write(str(sorted_result_diz_sp2[fam][0])+"\n")
             sig_fam_genes_comm_out.write("\n")
-    sys.stdout.write(" significant_common_families_genes.........OK"+"\n")
+    if args.verbose==2:
+        sys.stdout.write(" significant_common_families_genes.........OK"+"\n")
 
     #tutti le famiglie in comune con i relativi geni
     with open ("./"+args.sample+"_results/"+args.sample+"_all_common_families_and_genes.txt", "w") as all_fam_genes_comm_out:
@@ -974,7 +1034,8 @@ def main():
             all_fam_genes_comm_out.write(','.join(sig_plazaID_spID_sp2[fam])+"\t")
             all_fam_genes_comm_out.write(str(sorted_result_diz_sp2[fam][0])+"\n")
             all_fam_genes_comm_out.write("\n")
-    sys.stdout.write(" all_common_families_genes.................OK"+"\n")
+    if args.verbose==2:
+        sys.stdout.write(" all_common_families_genes.................OK"+"\n")
 
     #dettagli NPMI per sp1
     with open ("./"+args.sample+"_results/"+args.sample+"_NPMI_results_sp1.txt", "w") as NPMI_result_sp1_out:
@@ -986,7 +1047,8 @@ def main():
                 values_to_print.append(str(value))
             NPMI_result_sp1_out.write("\t".join(values_to_print))
             NPMI_result_sp1_out.write("\n")
-    sys.stdout.write(" NPMI_results_sp1..........................OK"+"\n")
+    if args.verbose==2:
+        sys.stdout.write(" NPMI_results_sp1..........................OK"+"\n")
 
 
     #dettagli NPMI per sp2
@@ -999,7 +1061,8 @@ def main():
                 values_to_print.append(str(value))
             NPMI_result_sp2_out.write("\t".join(values_to_print))
             NPMI_result_sp2_out.write("\n")
-    sys.stdout.write(" NPMI_results_sp2..........................OK"+"\n")
+    if args.verbose==2:
+        sys.stdout.write(" NPMI_results_sp2..........................OK"+"\n")
 
     #stat della run
     with open ("./"+args.sample+"_results/"+args.sample+"_stat.txt", "w") as stat_out:
@@ -1018,6 +1081,8 @@ def main():
         stat_out.write("  Mean_NPMI: "+str(mean_NPMI_all)+"\n")
         stat_out.write(" Significant by NPMI test: "+str(len(common_sig_family_sp1_sp2))+"\n")
         stat_out.write("  Mean_NPMI: "+str(mean_NPMI_all_sig)+"\n")
+        stat_out.write("  Random list generated: "+str(args.random)+"\n")
+        stat_out.write("  FDR correction method: "+str(args.FDR)+"\n")
 
         stat_out.write("\n")
 
@@ -1099,20 +1164,39 @@ def main():
         stat_out.write(" Significant families and genes IDs can be found in the result folder."+"\n")
         stat_out.write("\n")
         stat_out.write("----------------------------------------------------------"+"\n")
+        stat_out.write("INPUT COMMAND:"+"\n")
+        stat_out.write(" "+os.path.basename(sys.argv[0])+" --sp1 "+args.sp1+" --sp2 "+args.sp2+" --in_sp1 "+args.in_sp1+" --in_sp2 "+args.in_sp2+"\n")
+        stat_out.write(" "+" --plaza "+args.plaza+" --th_sc "+str(args.th_sc)+" --th "+str(args.th)+"\n")
+        stat_out.write(" "+" --random "+str(args.random)+" --FDR "+args.FDR+" --sample "+args.sample+" --verbose "+str(args.verbose)+"\n")
+        stat_out.write("\n")
+        stat_out.write("----------------------------------------------------------"+"\n")
 
-        sys.stdout.write(" stat......................................OK"+"\n")
+        if args.verbose==2:
+            sys.stdout.write(" stat......................................OK"+"\n")
+            sys.stdout.write("\n")
+            sys.stdout.write("----------------------------------------------------------"+"\n")
+
+
+################################################################################
+
+    #scrivo lo stdout in versione compact
+
+    if args.verbose==1:
         sys.stdout.write("\n")
-        sys.stdout.write("----------------------------------------------------------"+"\n")
+        sys.stdout.write("Results of the comparison between "+sample_sp1+" and "+sample_sp2+"\n")
+        sys.stdout.write("Maximum overlap= "+max_overlap+"\n")
+        sys.stdout.write("Families in common= "+str(len(sig_very_all_common_fam))+"\n")
+        sys.stdout.write("Mean NPMI= "+str(mean_NPMI_all)+"\n")
+        sys.stdout.write("Significant families in common= "+str(len(common_sig_family_sp1_sp2))+"\n")
+        sys.stdout.write("Mean NPMI significant= "+str(mean_NPMI_all_sig)+"\n")
+        sys.stdout.write("Significant-input ratio= "+str(round(len(common_sig_family_sp1_sp2)/int(max_overlap),6))+"\n")
+        sys.stdout.write("Numer of tests= "+str(args.random)+"\n")
+        sys.stdout.write("\n")
 
+    #scrivo lo stdout in versione line
 
-        # print(mean_NPMI_sp1)
-        # print(mean_NPMI_sp2)
-        # print(mean_NPMI_all)
-        # print(mean_NPMI_sp1_sig)
-        # print(mean_NPMI_sp2_sig)
-        # print(mean_NPMI_all_sig)
-        # for key in random_dataset_result_sp1:
-        #     print (key, random_dataset_result_sp1[key])
+    if args.verbose==3:
+        sys.stdout.write(args.sample+"\t"+max_overlap+"\t"+str(len(sig_very_all_common_fam))+"\t"+str(mean_NPMI_all)+"\t"+str(len(common_sig_family_sp1_sp2))+"\t"+str(mean_NPMI_all_sig)+"\t"+str(round(len(common_sig_family_sp1_sp2)/int(max_overlap),6))+"\t"+str(args.random)+"\n")
 
 
 ################################################################################
