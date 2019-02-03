@@ -1,0 +1,117 @@
+<tool id="PlanTAMI" name="PlanTAMI" version="1">
+  <description> tool for Plant Transcriptomics using Mutual Information
+  </description>
+  <macros>
+  </macros>
+  <requirements>
+  	<requirement type="package" >scipy</requirement>
+  </requirements>
+  <command>
+    <![CDATA[
+    python3 $__tool_directory__/PlanTAMI.py --sp1 $sp1 --sp2 $sp2 --in_sp1 $in_sp1 --in_sp2 $in_sp2
+      --plaza $plaza --verbose 2
+    #if $th_sc
+      --th_sc $th_sc
+    #end if
+    #if $th
+      --th $th
+    #end if
+    #if $random
+      --random $random
+    #end if
+    #if $FDR
+      --FDR $FDR
+    #end if
+
+    &>$log
+	]]>
+  </command>
+  <inputs>
+    <param format="txt" name="sp1" label="Species of input list 1 " type="select">
+      <option value="bdi">Brachypodium distachyon</option>
+      <option value="atr">Amborella trichopoda</option>
+      <option value="ath">Arabidopsis thaliana</option>
+      <option value="aco">Ananas comosus</option>
+      <option value="ptr">Populus trichocarpa</option>
+      <option value="mpo">Marchantia polymorpha</option>
+      <option value="spo">Spirodela polyrhiza</option>
+      <option value="smo">Selaginella moellendorffii</option>
+      <option value="peq">Phalaenopsis equestris</option>
+      <option value="tae">Triticum aestivum</option>
+      <option value="hvu">Hordeum vulgare</option>
+      <option value="obr">Oryza brachyantha</option>
+      <option value="osaindica">Oryza sativa ssp. indica</option>
+      <option value="zosmarina">Zostera marina</option>
+      <option value="mco">Micromonas commoda</option>
+      <option value="mac">Musa acuminata</option>
+      <option value="ped">Phyllostachys edulis</option>
+      <option value="cre">Chlamydomonas reinhardtii</option>
+      <option value="sbi">Sorghum bicolor</option>
+      <option value="oth">Oropetium thomaeum</option>
+      <option value="egu">Elaeis guineensis</option>
+      <option value="ppa">Physcomitrella patens</option>
+      <option value="sit">Setaria italica</option>
+      <option value="zma">Zea mays</option>
+      <option value="zjn">Zoysia japonica ssp. nagirizaki</option>
+      <option value="sly">Solanum lycopersicum</option>
+      <option value="osa">Oryza sativa ssp. japonica</option>
+      <option value="vvi">Vitis vinifera</option>
+      <option value="pab">Picea abies</option>
+    </param>
+    <param format="txt" name="sp2" label="Species of input list 2 " type="select">
+      <option value="bdi">Brachypodium distachyon</option>
+      <option value="atr">Amborella trichopoda</option>
+      <option value="ath">Arabidopsis thaliana</option>
+      <option value="aco">Ananas comosus</option>
+      <option value="ptr">Populus trichocarpa</option>
+      <option value="mpo">Marchantia polymorpha</option>
+      <option value="spo">Spirodela polyrhiza</option>
+      <option value="smo">Selaginella moellendorffii</option>
+      <option value="peq">Phalaenopsis equestris</option>
+      <option value="tae">Triticum aestivum</option>
+      <option value="hvu">Hordeum vulgare</option>
+      <option value="obr">Oryza brachyantha</option>
+      <option value="osaindica">Oryza sativa ssp. indica</option>
+      <option value="zosmarina">Zostera marina</option>
+      <option value="mco">Micromonas commoda</option>
+      <option value="mac">Musa acuminata</option>
+      <option value="ped">Phyllostachys edulis</option>
+      <option value="cre">Chlamydomonas reinhardtii</option>
+      <option value="sbi">Sorghum bicolor</option>
+      <option value="oth">Oropetium thomaeum</option>
+      <option value="egu">Elaeis guineensis</option>
+      <option value="ppa">Physcomitrella patens</option>
+      <option value="sit">Setaria italica</option>
+      <option value="zma">Zea mays</option>
+      <option value="zjn">Zoysia japonica ssp. nagirizaki</option>
+      <option value="sly">Solanum lycopersicum</option>
+      <option value="osa">Oryza sativa ssp. japonica</option>
+      <option value="vvi">Vitis vinifera</option>
+      <option value="pab">Picea abies</option>
+    </param>
+    <param format="txt" name="in_sp1" label="Genes list 1" type="data" />
+    <param format="txt" name="in_sp2" label="Genes list 2" type="data" />
+    <param format="txt" name="plaza" label="Table of orthologs families" type="data" />
+    <param format="float" name="th_sc" label="Threshold to call significant direct orthologs " type="float" value="0.05" min="0" max="1" optional="True"/>
+    <param format="float" name="th" label="Threshold to call significant orthologs families" type="float" value="0.05" min="0" max="1" optional="True"/>
+    <param format="txt" name="FDR" label="Multiple test correction method" type="select" value="BH" optional="True"/>
+      <option value="BH">Benjamini-Hochberg</option>
+      <option value="BY">Benjamini-Yekutieli</option>
+    <param format="integer" name="random" label="Number of lists pairs to be generated" type="integer" value="10000" min="10" max="100000" optional="True"/>
+  </inputs>
+  <outputs>
+    <data format="txt" name="all_common_families_and_genes" from_work_dir="my_sample_result_results/my_sample_result_all_common_families_and_genes.txt" label="All common families and genes"/>
+    <data format="txt" name="NPMI_results_sp1" from_work_dir="my_sample_result_results/my_sample_result_NPMI_results_sp1.txt" label="All NPMI values computed for sp1 families"/>
+    <data format="txt" name="NPMI_results_sp2" from_work_dir="my_sample_result_results/my_sample_result_NPMI_results_sp2.txt" label="All NPMI values computed for sp2 families"/>
+    <data format="txt" name="significant_common_families_and_genes" from_work_dir="my_sample_result_results/my_sample_result_significant_common_families_and_genes.txt" label="Significant common families and genes"/>
+    <data format="txt" name="significant_direct_orthologs" from_work_dir="my_sample_result_results/my_sample_result_significant_direct_orthologs.txt" label="Significant direct orthologs"/>
+    <data format="txt" name="significant_genes_sp1" from_work_dir="my_sample_result_results/my_sample_result_significant_genes_sp1.txt" label="List of significant genes from sp1"/>
+    <data format="txt" name="significant_genes_sp2" from_work_dir="my_sample_result_results/my_sample_result_significant_genes_sp2.txt" label="List of significant genes from sp2"/>
+    <data format="txt" name="result_summary" from_work_dir="my_sample_result_results/my_sample_result_stat.txt" label="Summary of the comparison results"/>
+    <data format="txt" name="log" from_work_dir="log" label="log file of the run"/>
+  </outputs>
+  <help>
+  </help>
+  <citations>
+  </citations>
+</tool>
