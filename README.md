@@ -2,7 +2,8 @@
 ###### Tool for PLants Transcriptomes Analyisi with Mutual Information
 
 This **tool** takes two lists of DEGs of different species and returns the the directo orthologs and orthologs family enriched
-between them, to eavoulate the family Normalise Pointwise Mutual Information is used and an empirical p value is computed. 
+between them, to eavoulate the family Normalise Pointwise Mutual Information is used and an empirical p value is computed.
+In this repository are available also the results obtained compraing the inflorescence transcriptome of Arabidopsis, Rice, Tomato and Barley. Also a detailed analysis of the more promisong family is provided. For detailed description of the tool and the dataset analysed refer to the file: Prototyping, implementation and validation of PlanTaMI: a tool for Plant Transcriptomics using Mutual Information. 
 
 The **input** needed by the tool are:
   + --plaza 
@@ -23,6 +24,8 @@ The **input** needed by the tool are:
   the method to adjust the p-value, Benjamini-Hochberg (BH) and Benjamini-Yekutieli (BY) are available (def=BY)
   + --sample
   the name of the sample to save results (def=my_sample_result)
+  + --verbose
+  the style of the output printed on the terminal during the run (0=none, 1=compact, 2=full, 3=line, def=1)
 
 The **output** return by the tool are: 
  + -significant_direct_orthologs (or NOT_significant_direct_orthologs)
