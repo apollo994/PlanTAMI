@@ -1,0 +1,8 @@
+	IM	FM	ST3
+IMr1	1	0	0
+IMr2	1	0	0
+FMr1	0	1	0
+FMr2	0	1	0
+ST3r1	0	0	1
+ST3r2	0	0	1
+
