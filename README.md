@@ -1,7 +1,7 @@
 # PlanTAMI
 ###### Tool for PLants Transcriptomes Analyisi with Mutual Information
 
-This repository contains the most significant files generated during my thesis project, in addition to the source code of the tool I developed, are also available the results obtained comparing the inflorescence transcriptome of Arabidopsis, Rice, Tomato and Barley and a small collection of scripts used to handle and visualize data. 
+This repository contains the most significant files generated during my thesis project, in addition to the source code of the tool I developed, are also available the wrapper for Galaxy, the results obtained comparing the inflorescence transcriptome of Arabidopsis, Rice, Tomato and Barley and a small collection of scripts used to handle and visualize data. 
 A detailed analysis of the more interesting and poorly characterised family is provided. For the detailed description of the tool and the dataset analysed refer to the file: Prototyping, implementation and validation of PlanTaMI.
 
 This **tool** takes two lists of DEGs of different species and returns the direct orthologs and orthologs family enriched
