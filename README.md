@@ -7,7 +7,8 @@ In addition to the source code of the tool I developed are also available the wr
 For a detailed description of the tool and the dataset analysed refer to the file: Prototyping, implementation and validation of PlanTaMI.
 
 This **tool** takes two lists of DEGs of different species and returns the direct orthologs and orthologs family enriched
-between them, to evaluate the family Normalise Pointwise Mutual Information is used and an empirical p-value is computed.
+between the two set.
+To evaluate the family Normalise Pointwise Mutual Information is used and an empirical p-value is computed (bootstrapping).
 
 The **input** needed by the tool are:
   + --plaza 
