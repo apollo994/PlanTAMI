@@ -3,7 +3,7 @@
 
 This repository contains the most significant files generated during my thesis project
 
-In addition to the source code of the tool I developed are also available the wrapper for Galaxy,test data (Inflorescence transcriptome of Arabidopsis, Rice, Tomato and Barley) and a small collection of scripts used to handle and visualize data. 
+In addition to the source code of the tool is also available the wrapper for Galaxy,test data (Inflorescence transcriptome of Arabidopsis, Rice, Tomato and Barley) and a small collection of scripts used to handle and visualize data. 
 For a detailed description of the tool and the dataset analysed refer to the file: Prototyping, implementation and validation of PlanTaMI.
 
 This **tool** takes two lists of DEGs of different species and returns the direct orthologs and orthologs family enriched
